@@ -1,0 +1,6 @@
+name: Core
+version: 0.1
+description: The Core library
+load: STARTUP
+author: ZackarySantana
+main: zsantana.CorePlugin
