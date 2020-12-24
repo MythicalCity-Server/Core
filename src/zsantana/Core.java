@@ -18,5 +18,6 @@ public class Core extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		this._handler.stop();
 	}
 }

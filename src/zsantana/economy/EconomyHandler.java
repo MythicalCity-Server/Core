@@ -8,21 +8,21 @@ import zsantana.handlers.Handler;
 
 public class EconomyHandler extends Handler {
 	
-	private Map<String, Bank> _banks;
+	private Map<String, Bank<?>> _banks;
 
 	@Override
-	public String init() {
+	public void enable() {
 		this._banks = new HashMap<>();
 		
-		Bank dollar = new DollarBank();
+		Bank<Double> dollar = new DollarBank();
 		this._banks.put("DollarBank", dollar);
-		
-		return !dollar.successfulInit() ? "Dollar failed to load." : "";
+	}
+	
+	public Bank<?> getBank(String name) {
+		return this._banks.get(name);
 	}
 	
 	@Override
-	protected String disable() {
-		return "";
+	protected void disable() {
 	}
-
 }

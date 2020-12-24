@@ -10,26 +10,22 @@ public abstract class Handler {
 		_CORE = core;
 	}
 	
-	private final String _INIT_SUCCESSFUL;
 	
 	public Handler() {
-		this._INIT_SUCCESSFUL = init();
+		enable();
 	}
 	
-	public final String restart() {
-		return stop() + init();
+	public final void restart() {
+		stop();
+		enable();
 	}
 	
-	public final String stop() {
-		return disable();
-	}
-	
-	public final String successfulInit() {
-		return this._INIT_SUCCESSFUL;
+	public final void stop() {
+		disable();
 	}
 
-	protected abstract String init();
+	protected abstract void enable();
 	
-	protected abstract String disable();
+	protected abstract void disable();
 	
 }

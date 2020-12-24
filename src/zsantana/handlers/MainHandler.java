@@ -7,13 +7,12 @@ public class MainHandler extends Handler {
 	private EconomyHandler _economy;
 
 	@Override
-	public String init() {
+	public void enable() {
 		this._economy = new EconomyHandler();
 		
-		return this._economy.successfulInit();
 	}
 	@Override
-	protected String disable() {
-		return this._economy.stop();
+	protected void disable() {
+		this._economy.stop();
 	}
 }
