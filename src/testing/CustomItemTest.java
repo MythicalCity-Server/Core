@@ -6,23 +6,37 @@ import org.bukkit.inventory.ItemStack;
 
 import zsantana.customitems.CustomItem;
 import zsantana.customitems.data.Listening;
+import zsantana.customitems.events.DamageEntityEvent;
 import zsantana.customitems.events.InteractEvent;
+import zsantana.customitems.events.PickUpEvent;
+import zsantana.customitems.events.ToggleSprintEvent;
 
 public class CustomItemTest extends CustomItem {
 	
 	public CustomItemTest() {
-		registerAction(InteractEvent.class, (event) -> {
-			InteractEvent i = (InteractEvent) event;
-			event.getPlayer().sendMessage("TEST");
-			if (i.getAction() == Action.LEFT_CLICK_AIR) {
-				event.getPlayer().sendMessage("WOW");
-			}
-		});
+		
 	}
 	
 	@Listening
 	public void test(InteractEvent event) {
-		System.out.println("VERY COOL INDEEEED");
+		if (event.getAction() == Action.LEFT_CLICK_AIR) {
+			event.getPlayer().teleport(event.getPlayer().getLocation().add(event.getPlayer().getLocation().getDirection().multiply(5)));
+		}
+	}
+	
+	@Listening
+	public void cameron(PickUpEvent event) {
+		event.getPlayer().sendMessage("You picked up an apple");
+	}
+	
+	@Listening
+	public void sprinting(ToggleSprintEvent event) {
+		event.getPlayer().sendMessage("You are sprinting with an apple");
+	}
+	
+	@Listening
+	public void entityDamage(DamageEntityEvent event) {
+		event.getPlayer().sendMessage("STOP");
 	}
 
 	@Override

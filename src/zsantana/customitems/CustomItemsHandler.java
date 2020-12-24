@@ -12,21 +12,16 @@ import zsantana.handlers.Handler;
  */
 public class CustomItemsHandler extends Handler {
 	
-	private final CustomItemEventHandler _eventHandler;
-	
-	/**
-	 * Creates and registers the event listener
-	 */
-	public CustomItemsHandler() {
-		this._eventHandler = new CustomItemEventHandler();
-	}
+	private CustomItemEventHandler _eventHandler;
 	
 	@Override
 	protected void enable() {
+		this._eventHandler = new CustomItemEventHandler();
 		Bukkit.getPluginManager().registerEvents(this._eventHandler, _CORE);
 	}
 
 	@Override
 	protected void disable() {
+		this._eventHandler = null;
 	}
 }

@@ -5,12 +5,11 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
@@ -23,6 +22,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import zsantana.customitems.events.DamageEntityEvent;
 import zsantana.customitems.events.DropEvent;
 import zsantana.customitems.events.Event;
 import zsantana.customitems.events.Event.CancellableEvent;
@@ -53,6 +53,15 @@ public class CustomItemEventHandler implements Listener {
 		CustomItem.setEventHandler(this);
 
 		this._EVENTS = new HashMap<>();
+		this._EVENTS.put(InteractEvent.class, new HashMap<>());
+		this._EVENTS.put(DropEvent.class, new HashMap<>());
+		this._EVENTS.put(ItemBreakEvent.class, new HashMap<>());
+		this._EVENTS.put(ItemConsumeEvent.class, new HashMap<>());
+		this._EVENTS.put(SwitchItemEvent.class, new HashMap<>());
+		this._EVENTS.put(PickUpEvent.class, new HashMap<>());
+		this._EVENTS.put(PickUpItemEvent.class, new HashMap<>());
+		this._EVENTS.put(ToggleSneakEvent.class, new HashMap<>());
+		this._EVENTS.put(ToggleSprintEvent.class, new HashMap<>());
 	}
 
 	/**
@@ -88,7 +97,6 @@ public class CustomItemEventHandler implements Listener {
 				CancellableEvent temp = new InteractEvent(event.getPlayer(), itemStack, action);
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
-				return;
 			}
 		}
 	}
@@ -105,7 +113,6 @@ public class CustomItemEventHandler implements Listener {
 				CancellableEvent temp = new DropEvent(event.getPlayer(), itemStack, event.getItemDrop());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
-				return;
 			}
 		}
 	}
@@ -120,7 +127,6 @@ public class CustomItemEventHandler implements Listener {
 			if (tests.apply(itemStack)) {
 				Consumer<Event> run = events.get(tests);
 				run.accept(new ItemBreakEvent(event.getPlayer(), itemStack));
-				return;
 			}
 		}
 	}
@@ -138,7 +144,6 @@ public class CustomItemEventHandler implements Listener {
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 				event.setItem(temp.getItemStack());
-				return;
 			}
 		}
 	}
@@ -157,7 +162,6 @@ public class CustomItemEventHandler implements Listener {
 				CancellableEvent temp = new SwitchItemEvent(event.getPlayer(), old, current);
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
-				return;
 			}
 		}
 	}
@@ -176,7 +180,6 @@ public class CustomItemEventHandler implements Listener {
 				CancellableEvent temp = new PickUpEvent(event.getPlayer(), event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
-				return;
 			}
 		}
 		ItemStack mainHand = inven.getItemInHand();
@@ -187,11 +190,10 @@ public class CustomItemEventHandler implements Listener {
 				CancellableEvent temp = new PickUpItemEvent(event.getPlayer(), event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
-				return;
 			}
 		}
 	}
-	
+
 	// TOGGLE SNEAK EVENT
 
 	@EventHandler
@@ -203,10 +205,11 @@ public class CustomItemEventHandler implements Listener {
 			if (tests.apply(itemstack)) {
 				Consumer<Event> run = events.get(tests);
 				run.accept(new ToggleSneakEvent(event.getPlayer(), itemstack));
-				return;
 			}
 		}
 	}
+
+	// TOGGLE SPRINT EVENT
 
 	@EventHandler
 	public void onToggleSprintEvent(PlayerToggleSprintEvent event) {
@@ -217,7 +220,25 @@ public class CustomItemEventHandler implements Listener {
 			if (tests.apply(itemstack)) {
 				Consumer<Event> run = events.get(tests);
 				run.accept(new ToggleSprintEvent(event.getPlayer(), itemstack));
-				return;
+			}
+		}
+	}
+
+	// ENTITY DAMAGE EVENT
+
+	@EventHandler
+	public void onEntityDamageEvent(EntityDamageByEntityEvent event) {
+		if (event.getDamager() instanceof Player) {
+			PlayerInventory inven = ((Player) event.getDamager()).getInventory();
+			ItemStack itemstack = inven.getItemInHand();
+			Map<Function<ItemStack, Boolean>, Consumer<Event>> events = _EVENTS.get(DamageEntityEvent.class);
+			for (Function<ItemStack, Boolean> tests : events.keySet()) {
+				if (tests.apply(itemstack)) {
+					Consumer<Event> run = events.get(tests);
+					CancellableEvent temp = new DamageEntityEvent(((Player) event.getDamager()), itemstack, event.getEntity());
+					run.accept(temp);
+					event.setCancelled(temp.isCancelled());
+				}
 			}
 		}
 	}

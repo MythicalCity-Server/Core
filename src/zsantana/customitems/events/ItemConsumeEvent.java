@@ -14,19 +14,11 @@ public class ItemConsumeEvent extends CancellableEvent {
 		this._itemStack = itemStack;
 	}
 
-	/**
-	 * @return The itemstack that is involved in the event
-	 */
 	@Override
 	public ItemStack getItemStack() {
 		return this._itemStack;
 	}
 
-	/**
-	 * Sets the itemstack
-	 * 
-	 * @param itemStack The new instance of itemstack
-	 */
 	public void setItemStack(ItemStack itemStack) {
 		this._itemStack = itemStack;
 	}
