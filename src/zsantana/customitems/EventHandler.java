@@ -13,16 +13,32 @@ import org.bukkit.inventory.ItemStack;
 import zsantana.customitems.events.Event;
 import zsantana.customitems.events.InteractEvent;
 
+/**
+ * Manages registering the events to a map and calling them when the event triggers
+ * 
+ * @author Zackary Santana
+ *
+ */
 public class EventHandler implements Listener {
 
 	private final Map<Class<? extends Event>, Map<Function<ItemStack, Boolean>, Consumer<Event>>> _EVENTS;
 
-	public EventHandler(CustomItemsHandler handler) {
+	/**
+	 * Sets the hook in Custom Item class and starts the event map
+	 */
+	public EventHandler() {
 		CustomItem.setEventHandler(this);
 
 		this._EVENTS = new HashMap<>();
 	}
 
+	/**
+	 * Registers a new action to run when the event type and custom item are both happening in the same event
+	 * 
+	 * @param eventType The event you would like to listen for
+	 * @param customItem The custom item that is listening to the event
+	 * @param run The action to do when this event happens
+	 */
 	public void register(Class<? extends Event> eventType, CustomItem customItem, Consumer<Event> run) {
 		if (!this._EVENTS.containsKey(eventType)) this._EVENTS.put(eventType, new HashMap<>());
 		this._EVENTS.get(eventType).put((item) ->{
@@ -31,6 +47,8 @@ public class EventHandler implements Listener {
 			run.accept(event);
 		});
 	}
+	
+	// Below is all the events that run and must loop through the stored actions
 
 	@org.bukkit.event.EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent event) {

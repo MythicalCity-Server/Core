@@ -50,6 +50,11 @@ public abstract class CustomItem {
 		return getItem().isSimilar(item);
 	}
 	
+	/**
+	 * Returns the item to use when checking if an item is applicable 
+	 * 
+	 * @return An itemstack representing this custom item
+	 */
 	public abstract ItemStack getItem();
 	
 	@SuppressWarnings("unchecked")

@@ -2,6 +2,12 @@ package zsantana.economy.banks;
 
 import zsantana.economy.Bank;
 
+/**
+ * A test bank, represents currency in dollars
+ * 
+ * @author Zackary Santana
+ *
+ */
 public class DollarBank extends Bank<Double> {
 
 	public DollarBank() {
@@ -21,7 +27,7 @@ public class DollarBank extends Bank<Double> {
 
 	@Override
 	@Deprecated
-	public boolean ammend(String key, Double value) {
+	public boolean amend(String key, Double value) {
 		this._CURRENCY.put(key, this._CURRENCY.get(key) + value);
 		return true;
 	}
