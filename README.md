@@ -7,8 +7,8 @@ Core is my personal library that is used by other repositories in this organizat
 The following features are built in to this repo:
 
 <ul>
-<li>- [<i>[Economy](#economy)</i>]</li>: Handles multiple banks and saving the banks, with different values compatibility
-<li>- [<i>[Custom Items](#customitems)</i>]</li>: Allows the user to create a custom item that can hook on to events with just an annotation
+<li>- [<i><a href="#economy">Economy</a></i>]</li>: Handles multiple banks and saving the banks, with different values compatibility
+<li>- [<i><a href="#custom-items">Custom Items</a></i>]</li>: Allows the user to create a custom item that can hook on to events with just an annotation
 <li>- [<i>TBA</i>]</li>: 
 <li>- [<i>TBA</i>]</li>: 
 </ul>
@@ -25,11 +25,11 @@ Each feature has a master handler class that handles how the user directly uses 
 
 # Features Details
 
-## <a name="economy">Economy</a>
+## Economy
 
 TBA
 
-## <a name="customitems">Custom Items</a>
+## Custom Items
 
 TBA
 
