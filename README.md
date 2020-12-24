@@ -9,8 +9,8 @@ The following features are built in to this repo:
 <ul>
 <li>- [<i><a href="#economy">Economy</a></i>]: Handles multiple banks and saving the banks, with different values compatibility</li>
 <li>- [<i><a href="#custom-items">Custom Items</a></i>]: Allows the user to create a custom item that can hook on to events with just an annotation</li>
-<li>- [<i>TBA</i>] ABC</li>: 
-<li>- [<i>TBA</i>] ABC</li>: 
+<li>- [<i>TBA</i>]: ABC</li>
+<li>- [<i>TBA</i>]: ABC</li>
 </ul>
 
 ## Motivation
