@@ -14,8 +14,7 @@ public class EconomyHandler extends Handler {
 	public void enable() {
 		this._banks = new HashMap<>();
 		
-		Bank<Double> dollar = new DollarBank();
-		this._banks.put("DollarBank", dollar);
+		this._banks.put("dollar_bank", new DollarBank());
 	}
 	
 	public Bank<?> getBank(String name) {
@@ -24,5 +23,8 @@ public class EconomyHandler extends Handler {
 	
 	@Override
 	protected void disable() {
+		this._banks.values().forEach((bank) -> {
+			bank.unload();
+		});
 	}
 }

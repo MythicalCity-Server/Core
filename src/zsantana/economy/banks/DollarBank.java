@@ -5,18 +5,17 @@ import zsantana.economy.Bank;
 public class DollarBank extends Bank<Double> {
 
 	public DollarBank() {
-		super("Dollar");
+		super("Dollar", "Dollar Bank");
 	}
 
 	@Override
-	protected boolean loadBank() {
+	protected boolean load() {
 		this._CURRENCY.put("Test", 50.0);
-		
 		return true;
 	}
 
 	@Override
-	protected boolean unloadBank() {
+	protected boolean unload() {
 		return true;
 	}
 
