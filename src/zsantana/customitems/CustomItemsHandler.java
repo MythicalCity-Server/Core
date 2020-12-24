@@ -12,13 +12,13 @@ import zsantana.handlers.Handler;
  */
 public class CustomItemsHandler extends Handler {
 	
-	private final EventHandler _eventHandler;
+	private final CustomItemEventHandler _eventHandler;
 	
 	/**
 	 * Creates and registers the event listener
 	 */
 	public CustomItemsHandler() {
-		this._eventHandler = new EventHandler();
+		this._eventHandler = new CustomItemEventHandler();
 	}
 	
 	@Override

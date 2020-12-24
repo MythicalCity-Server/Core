@@ -17,12 +17,12 @@ import zsantana.customitems.events.Event;
  */
 public abstract class CustomItem {
 	
-	private static EventHandler _EVENT_HANDLER;
+	private static CustomItemEventHandler _EVENT_HANDLER;
 	
 	/**
 	 * @param eventHandler The Event Handler to register events on to during load
 	 */
-	public static void setEventHandler(EventHandler eventHandler) {
+	public static void setEventHandler(CustomItemEventHandler eventHandler) {
 		_EVENT_HANDLER = eventHandler;
 	}
 	
