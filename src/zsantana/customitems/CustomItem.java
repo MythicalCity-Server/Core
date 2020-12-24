@@ -1,65 +1,73 @@
 package zsantana.customitems;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
 
 import org.bukkit.inventory.ItemStack;
 
+import zsantana.customitems.data.Listening;
 import zsantana.customitems.events.Event;
 
+/**
+ * All custom items extend this class and implement methods using the @Listening annotation
+ * The first and only parameter in those methods must be classes that extend Event
+ * 
+ * @author Zackary Santana
+ *
+ */
 public abstract class CustomItem {
 	
-	private Settings _settings;
+	private static EventHandler _EVENT_HANDLER;
 	
-	@SafeVarargs
-	public CustomItem(Class<? extends Event>... listenTo) {
-		this._settings = new Settings(listenTo);
-	}
-	
-	public CustomItem(List<Class<? extends Event>> listenTo) {
-		this._settings = new Settings(listenTo);
-	}
-
-	@SafeVarargs
-	public final void listenTo(Class<? extends Event>... listenTo) {
-		for (Class<? extends Event> listen : listenTo) {
-			this._settings._listeningTo.add(listen);
-		}
-	}
-
-	public final void listenTo(List<Class<? extends Event>> listenTo) {
-		this._settings._listeningTo.addAll(listenTo);
+	/**
+	 * @param eventHandler The Event Handler to register events on to during load
+	 */
+	public static void setEventHandler(EventHandler eventHandler) {
+		_EVENT_HANDLER = eventHandler;
 	}
 	
-	public final List<Class<? extends Event>> register() {
-		return this._settings._listeningTo;
+	public CustomItem() {
+		assignListening();
 	}
 	
-	public final void runEvent(Event event, Class<? extends Event> eventType) {
-		
+	/**
+	 * Registers a new event to be considered with the event type
+	 * 
+	 * @param eventType The event you would like the action to run on
+	 * @param action The action to run when this event is triggered with this custom item
+	 */
+	public final void registerAction(Class<? extends Event> eventType, Consumer<Event> action) {
+		_EVENT_HANDLER.register(eventType, this, action);
 	}
-
-	public boolean isApplicable(ItemStack item) {
+	
+	/**
+	 * Tests if this custom item is indeed the itemstack provided
+	 * 
+	 * @param item An itemstack to check
+	 * @return If this custom item is the itemstack provided
+	 */
+	public final boolean isApplicable(ItemStack item) {
 		return getItem().isSimilar(item);
 	}
 	
 	public abstract ItemStack getItem();
 	
-	private class Settings {
-		
-		private final List<Class<? extends Event>> _listeningTo;
-		
-		@SafeVarargs
-		public Settings(Class<? extends Event>... listenTo) {
-			this._listeningTo = new ArrayList<>();
-			for (Class<? extends Event> listen : listenTo) {
-				this._listeningTo.add(listen);
+	@SuppressWarnings("unchecked")
+	private final void assignListening() {
+		for (Method method : this.getClass().getDeclaredMethods()) {
+			if (method.isAnnotationPresent(Listening.class)) {
+				if (method.getParameterCount() == 1) {
+					if (Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
+						_EVENT_HANDLER.register((Class<? extends Event>) method.getParameterTypes()[0], this, (event) -> {
+							try {
+								method.invoke(this, method.getParameterTypes()[0].cast(event));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						});
+					}
+				}
 			}
-		}
-		
-		public Settings(List<Class<? extends Event>> listenTo) {
-			this._listeningTo = new ArrayList<>();
-			this._listeningTo.addAll(listenTo);
 		}
 	}
 }

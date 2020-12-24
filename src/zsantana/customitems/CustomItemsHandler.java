@@ -14,10 +14,6 @@ public class CustomItemsHandler extends Handler {
 		Bukkit.getPluginManager().registerEvents(this._eventHandler, _CORE);
 	}
 	
-	public void register(CustomItem customItem) {
-		this._eventHandler.register(customItem);
-	}
-
 	@Override
 	protected void enable() {
 		
