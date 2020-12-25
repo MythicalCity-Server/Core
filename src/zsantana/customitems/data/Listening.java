@@ -14,6 +14,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Listening {
-	
+
+	/**
+	 * Used to distinct if a method wants a specific slot equipped
+	 * 
+	 * @return The slot to be using when it is ran against checks
+	 */
 	Slot slot() default Slot.NA;
 }

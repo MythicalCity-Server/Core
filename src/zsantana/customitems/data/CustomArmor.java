@@ -89,8 +89,8 @@ public abstract class CustomArmor {
 									});
 						} else {
 							System.out.println(customSlot);
-							_EVENT_HANDLER.register((Class<? extends Event>) method.getParameterTypes()[0], this, customSlot,
-									(event) -> {
+							_EVENT_HANDLER.register((Class<? extends Event>) method.getParameterTypes()[0], this,
+									customSlot, (event) -> {
 										try {
 											method.invoke(this, method.getParameterTypes()[0].cast(event));
 										} catch (Exception e) {

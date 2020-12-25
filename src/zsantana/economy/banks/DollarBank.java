@@ -31,7 +31,7 @@ public class DollarBank extends Bank<Double> {
 		this._CURRENCY.put(key, this._CURRENCY.get(key) + value);
 		return true;
 	}
-	
+
 	public double add(String key, Double value) {
 		double finalAmount = this._CURRENCY.get(key) + value;
 		this._CURRENCY.put(key, finalAmount);

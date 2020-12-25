@@ -13,20 +13,19 @@ import zsantana.handlers.MainHandler;
  *
  */
 public class Core extends JavaPlugin {
-	
+
 	private MainHandler _handler;
 
 	/**
-	 * Hooks in to Handler then creates an instance, then creates a test class in case there is any tests to be done
+	 * Hooks in to Handler then creates an instance, then creates a test class in
+	 * case there is any tests to be done
 	 */
 	@Override
 	public void onEnable() {
 		Handler.setCore(this);
-		
+
 		this._handler = new MainHandler();
-		
-		
-		
+
 		// Testing:
 		new Testing();
 	}

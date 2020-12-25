@@ -11,7 +11,7 @@ import zsantana.economy.EconomyHandler;
  */
 @SuppressWarnings("unused")
 public class MainHandler extends Handler {
-	
+
 	private EconomyHandler _economy;
 	private CustomItemsHandler _customItems;
 
@@ -22,9 +22,9 @@ public class MainHandler extends Handler {
 	public void enable() {
 		this._economy = new EconomyHandler();
 		this._customItems = new CustomItemsHandler();
-		
+
 	}
-	
+
 	/**
 	 * Runs stop for the different handlers
 	 */

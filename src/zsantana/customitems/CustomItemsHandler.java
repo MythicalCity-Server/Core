@@ -11,9 +11,9 @@ import zsantana.handlers.Handler;
  *
  */
 public class CustomItemsHandler extends Handler {
-	
+
 	private CustomItemEventHandler _eventHandler;
-	
+
 	@Override
 	protected void enable() {
 		this._eventHandler = new CustomItemEventHandler();

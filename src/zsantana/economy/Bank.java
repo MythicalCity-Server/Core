@@ -22,7 +22,7 @@ public abstract class Bank<T> {
 	 * Defines the currency name and defines the banks name
 	 * 
 	 * @param currencyName The name of the currency, i.e. dollars
-	 * @param bankName The name of the bank, i.e. Bank of America
+	 * @param bankName     The name of the bank, i.e. Bank of America
 	 */
 	public Bank(String currencyName, String bankName) {
 		this._CURRENCY_NAME = currencyName;
@@ -36,7 +36,7 @@ public abstract class Bank<T> {
 	/**
 	 * Registers an account with this bank with a value
 	 * 
-	 * @param key The account's key to register
+	 * @param key   The account's key to register
 	 * @param value The value of the account
 	 * @return A previous account's value if it existed
 	 */
@@ -55,7 +55,7 @@ public abstract class Bank<T> {
 	}
 
 	/**
-	 * @return The name of the currency 
+	 * @return The name of the currency
 	 */
 	public final String getCurrencyName() {
 		return this._CURRENCY_NAME;
@@ -71,6 +71,7 @@ public abstract class Bank<T> {
 
 	/**
 	 * Starts this bank
+	 * 
 	 * @return If it was successful
 	 */
 	public boolean start() {
@@ -85,6 +86,7 @@ public abstract class Bank<T> {
 
 	/**
 	 * Stops this bank
+	 * 
 	 * @return If it was successful
 	 */
 	public final boolean stop() {
@@ -110,7 +112,7 @@ public abstract class Bank<T> {
 	/**
 	 * Changes the value for an account with the key
 	 * 
-	 * @param key The key of the account you want to change
+	 * @param key   The key of the account you want to change
 	 * @param value The value you want to amend to the account
 	 * @return If this action was successful
 	 */

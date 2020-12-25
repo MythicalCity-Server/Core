@@ -10,36 +10,33 @@ import org.bukkit.entity.Entity;
  *
  */
 public class Log {
-	
+
 	private static String _PREFIX;
-	
+
 	static {
 		_PREFIX = "&b";
 	}
-	
+
 	/**
-	 * A standard message using the prefix defined in the class
-	 * Sent to the console
+	 * A standard message using the prefix defined in the class Sent to the console
 	 * 
 	 * @param message The message to send to the console with the prefix
 	 */
 	public static void m(String message) {
 		System.out.println(ChatColor.translateAlternateColorCodes('&', _PREFIX + message));
 	}
-	
+
 	/**
-	 * A success message using a green prefix
-	 * Sent to the console
+	 * A success message using a green prefix Sent to the console
 	 * 
 	 * @param message The message to send to the console
 	 */
 	public static void s(String message) {
 		System.out.println(ChatColor.translateAlternateColorCodes('&', "&a" + message));
 	}
-	
+
 	/**
-	 * An error message using a red prefix
-	 * Sent to the console
+	 * An error message using a red prefix Sent to the console
 	 * 
 	 * @param message The message to send to the console
 	 */
@@ -47,10 +44,8 @@ public class Log {
 		System.out.println(ChatColor.translateAlternateColorCodes('&', "&c" + message));
 	}
 
-	
 	/**
-	 * A standard message using the prefix defined in the class
-	 * Sent to the entity
+	 * A standard message using the prefix defined in the class Sent to the entity
 	 * 
 	 * @param message The message to send to the entity with the prefix
 	 */
