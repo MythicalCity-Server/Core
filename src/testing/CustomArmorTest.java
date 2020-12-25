@@ -9,6 +9,7 @@ import zsantana.customitems.data.CustomArmor;
 import zsantana.customitems.data.Listening;
 import zsantana.customitems.data.Slot;
 import zsantana.customitems.events.InteractEvent;
+import zsantana.customitems.events.ToggleSneakEvent;
 import zsantana.misc.ItemFactory;
 
 public class CustomArmorTest extends CustomArmor {
@@ -18,10 +19,15 @@ public class CustomArmorTest extends CustomArmor {
 	public CustomArmorTest() {
 		this._item = ItemFactory.createItem(Material.LEATHER_HELMET, 1, "A basic helmet");
 	}
+	
+	@Listening(slot = Slot.HAND)
+	public void sneaking(ToggleSneakEvent event) {
+		event.getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
+	}
 
 	@Listening
 	public void interact(InteractEvent event) {
-		event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 10));
+		event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2000, 10));
 	}
 	
 	@Override
