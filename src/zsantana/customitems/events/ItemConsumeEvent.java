@@ -7,19 +7,18 @@ import zsantana.customitems.events.Event.CancellableEvent;
 
 public class ItemConsumeEvent extends CancellableEvent {
 
-	private ItemStack _itemStack;
+	private ItemStack _consumed;
 
-	public ItemConsumeEvent(Player player, ItemStack itemStack) {
+	public ItemConsumeEvent(Player player, ItemStack itemStack, ItemStack consumed) {
 		super(player, itemStack);
-		this._itemStack = itemStack;
+		this._consumed = consumed;
 	}
 
-	@Override
-	public ItemStack getItemStack() {
-		return this._itemStack;
+	public ItemStack getConsumed() {
+		return this._consumed;
 	}
 
-	public void setItemStack(ItemStack itemStack) {
-		this._itemStack = itemStack;
+	public void setConsumed(ItemStack itemStack) {
+		this._consumed = itemStack;
 	}
 }

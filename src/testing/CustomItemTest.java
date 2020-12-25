@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 
-import zsantana.customitems.CustomItem;
+import zsantana.customitems.data.CustomItem;
 import zsantana.customitems.data.Listening;
 import zsantana.customitems.events.DamageEntityEvent;
 import zsantana.customitems.events.InteractEvent;

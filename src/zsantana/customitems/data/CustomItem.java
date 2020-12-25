@@ -1,11 +1,11 @@
-package zsantana.customitems;
+package zsantana.customitems.data;
 
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 import org.bukkit.inventory.ItemStack;
 
-import zsantana.customitems.data.Listening;
+import zsantana.customitems.CustomItemEventHandler;
 import zsantana.customitems.events.Event;
 
 /**
