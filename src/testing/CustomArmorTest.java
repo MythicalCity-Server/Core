@@ -1,43 +1,36 @@
 package testing;
 
 import org.bukkit.Material;
-import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import zsantana.customitems.data.CustomArmor;
 import zsantana.customitems.data.Listening;
 import zsantana.customitems.data.Slot;
 import zsantana.customitems.events.InteractEvent;
-import zsantana.customitems.events.ToggleSprintEvent;
+import zsantana.misc.ItemFactory;
 
 public class CustomArmorTest extends CustomArmor {
+	
+	private ItemStack _item;
+	
+	public CustomArmorTest() {
+		this._item = ItemFactory.createItem(Material.LEATHER_HELMET, 1, "A basic helmet");
+	}
 
 	@Listening
-	public void sprint(ToggleSprintEvent event) {
-		event.getPlayer().sendMessage("Hey how are you");
-	}
-	
-	@Listening
 	public void interact(InteractEvent event) {
-		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-			PlayerInventory inventory = event.getPlayer().getInventory();
-			event.getPlayer().sendMessage("HI");
-			if (inventory.getHelmet() == null || inventory.getHelmet().getType() == Material.AIR) {
-				inventory.setHelmet(getItem());
-				event.getItemStack().setAmount(0);
-			}
-		}
+		event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 10));
 	}
 	
 	@Override
 	public Slot getSlot() {
-		return Slot.ALL;
+		return Slot.HELMET;
 	}
 
 	@Override
 	public ItemStack getItem() {
-		return new ItemStack(Material.YELLOW_FLOWER);
+		return this._item;
 	}
-
 }
