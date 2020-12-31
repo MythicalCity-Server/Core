@@ -4,3 +4,7 @@ description: The Core library
 load: STARTUP
 author: ZackarySantana
 main: zsantana.Core
+commands:
+  test: 
+    description: Hey
+    usage: /test

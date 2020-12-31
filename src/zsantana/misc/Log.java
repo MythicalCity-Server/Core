@@ -1,6 +1,7 @@
 package zsantana.misc;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 
 /**
@@ -51,5 +52,14 @@ public class Log {
 	 */
 	public static void m(Entity entity, String message) {
 		entity.sendMessage(ChatColor.translateAlternateColorCodes('&', _PREFIX + message));
+	}
+
+	/**
+	 * A standard message using the prefix defined in the class Sent to the command sender
+	 * 
+	 * @param message The message to send to the command sender with the prefix
+	 */
+	public static void m(CommandSender sender, String message) {
+		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', _PREFIX + message));
 	}
 }
