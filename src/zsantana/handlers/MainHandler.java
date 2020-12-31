@@ -1,5 +1,6 @@
 package zsantana.handlers;
 
+import zsantana.command.Command;
 import zsantana.configuration.Configuration;
 import zsantana.configuration.ConfigurationHandler;
 import zsantana.customitems.CustomItemsHandler;
@@ -24,6 +25,7 @@ public class MainHandler extends Handler {
 	@Override
 	public void enable() {
 		Configuration.setCore(_CORE);
+		Command.setCore(_CORE);
 		
 		this._economy = new EconomyHandler();
 		this._customItems = new CustomItemsHandler();

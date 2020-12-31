@@ -10,7 +10,7 @@ public class Testing {
 		CustomArmorTest test2 = new CustomArmorTest();
 		
 		TestConfig config = new TestConfig();
-		
+		TestCommand command = new TestCommand();
 		
 		
 		for (Player player : Bukkit.getOnlinePlayers()) {
