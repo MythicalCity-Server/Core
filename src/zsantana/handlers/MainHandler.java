@@ -1,5 +1,7 @@
 package zsantana.handlers;
 
+import zsantana.configuration.Configuration;
+import zsantana.configuration.ConfigurationHandler;
 import zsantana.customitems.CustomItemsHandler;
 import zsantana.economy.EconomyHandler;
 
@@ -14,14 +16,18 @@ public class MainHandler extends Handler {
 
 	private EconomyHandler _economy;
 	private CustomItemsHandler _customItems;
+	private ConfigurationHandler _configuration;
 
 	/**
 	 * Inits the different handlers
 	 */
 	@Override
 	public void enable() {
+		Configuration.setCore(_CORE);
+		
 		this._economy = new EconomyHandler();
 		this._customItems = new CustomItemsHandler();
+		this._configuration = new ConfigurationHandler();
 
 	}
 
@@ -32,5 +38,6 @@ public class MainHandler extends Handler {
 	protected void disable() {
 		this._economy.stop();
 		this._customItems.stop();
+		this._configuration.stop();
 	}
 }
