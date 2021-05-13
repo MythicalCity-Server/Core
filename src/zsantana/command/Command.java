@@ -1,7 +1,9 @@
 package zsantana.command;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -21,16 +23,20 @@ public abstract class Command implements CommandExecutor {
 		_CORE = core;
 	}
 
-	private Map<Function<CommandInformation, Boolean>, Consumer<CommandInformation>> _SUB_COMMANDS;
+	private final Map<Function<CommandInformation, Boolean>, Consumer<CommandInformation>> _SUB_COMMANDS;
+	private final List<Function<CommandSender, String>> _HELP_PAGE;
+	
+	private CommandSender _currentCommandSender;
 
 	public Command(String cmdName) {
 		this._SUB_COMMANDS = new HashMap<>();
+		this._HELP_PAGE = new ArrayList<>();
 		register();
 
 		_CORE.getCommand(cmdName).setExecutor(this);
 	}
 
-	private void register() {
+	private final void register() {
 		for (Method method : getClass().getDeclaredMethods()) {
 			if (method.isAnnotationPresent(CmdData.class) && method.getParameterCount() == 1
 					&& method.getParameterTypes()[0].isAssignableFrom(CommandInformation.class)) {
@@ -65,12 +71,20 @@ public abstract class Command implements CommandExecutor {
 						Log.m(commandInformation.getSender(), "&cYou don't have permission to do that!");
 					}
 				});
+				this._HELP_PAGE.add((sender) -> {
+					if (data.permission().equals("") || sender.hasPermission(data.permission())) {
+						return "";
+					} else {
+						return "";
+					}
+				});
 			}
 		}
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
+	public final boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
+		this._currentCommandSender = sender;
 		CommandInformation information = new CommandInformation(sender, args);
 		if (args.length == 0) {
 			noArguments(information);
@@ -86,7 +100,8 @@ public abstract class Command implements CommandExecutor {
 		return true;
 	}
 	
-	public void sendHelpPage(CommandSender sender) {
+	public final void sendHelpPage() {
+		this._currentCommandSender.sendMessage("Hey");
 		// TODO FROM PULLING THE METHOD INFORMATION AND STORING IT IN A FIELD
 	}
 

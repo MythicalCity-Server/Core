@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.ItemStack;
@@ -65,6 +64,7 @@ public class CustomItemEventHandler implements Listener {
 		this._EVENTS.put(PickUpItemEvent.class, new HashMap<>());
 		this._EVENTS.put(ToggleSneakEvent.class, new HashMap<>());
 		this._EVENTS.put(ToggleSprintEvent.class, new HashMap<>());
+		this._EVENTS.put(DamageEntityEvent.class, new HashMap<>());
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class CustomItemEventHandler implements Listener {
 		if (!this._EVENTS.containsKey(eventType))
 			this._EVENTS.put(eventType, new HashMap<>());
 		this._EVENTS.get(eventType).put((itemstack, slot) -> {
-			return customItem.isApplicable(itemstack);
+			return customItem.isApplicable(itemstack, slot);
 		}, (event) -> {
 			run.accept(event);
 		});
@@ -129,8 +129,9 @@ public class CustomItemEventHandler implements Listener {
 
 	@EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent event) {
-		ItemStack itemstack = event.getItem();
 		PlayerInventory inventory = event.getPlayer().getInventory();
+		ItemStack mainHand = inventory.getItemInMainHand();
+		ItemStack offHand = inventory.getItemInOffHand();
 		ItemStack helmet = inventory.getHelmet();
 		ItemStack chestplate = inventory.getChestplate();
 		ItemStack leggings = inventory.getLeggings();
@@ -138,9 +139,14 @@ public class CustomItemEventHandler implements Listener {
 		Action action = event.getAction();
 		Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(InteractEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(itemstack, Slot.HAND)) {
+			if (tests.apply(mainHand, Slot.MAIN_HAND)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new InteractEvent(event.getPlayer(), itemstack, action);
+				CancellableEvent temp = new InteractEvent(event.getPlayer(), mainHand, action);
+				run.accept(temp);
+				event.setCancelled(temp.isCancelled());
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				CancellableEvent temp = new InteractEvent(event.getPlayer(), offHand, action);
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(helmet, Slot.HELMET)) {
@@ -173,15 +179,27 @@ public class CustomItemEventHandler implements Listener {
 	public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
 		ItemStack itemstack = event.getItemDrop().getItemStack();
 		PlayerInventory inventory = event.getPlayer().getInventory();
+		ItemStack mainHand = inventory.getItemInMainHand();
+		ItemStack offHand = inventory.getItemInOffHand();
 		ItemStack helmet = inventory.getHelmet();
 		ItemStack chestplate = inventory.getChestplate();
 		ItemStack leggings = inventory.getLeggings();
 		ItemStack boots = inventory.getBoots();
 		Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(DropEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(itemstack, Slot.HAND)) {
+			if (tests.apply(itemstack, Slot.FLOOR)) {
 				Consumer<Event> run = events.get(tests);
 				CancellableEvent temp = new DropEvent(event.getPlayer(), itemstack, event.getItemDrop());
+				run.accept(temp);
+				event.setCancelled(temp.isCancelled());
+			} else if (tests.apply(mainHand, Slot.MAIN_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				CancellableEvent temp = new DropEvent(event.getPlayer(), mainHand, event.getItemDrop());
+				run.accept(temp);
+				event.setCancelled(temp.isCancelled());
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				CancellableEvent temp = new DropEvent(event.getPlayer(), offHand, event.getItemDrop());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(helmet, Slot.HELMET)) {
@@ -214,15 +232,20 @@ public class CustomItemEventHandler implements Listener {
 	public void onPlayerItemBreakEvent(PlayerItemBreakEvent event) {
 		ItemStack itemstack = event.getBrokenItem();
 		PlayerInventory inventory = event.getPlayer().getInventory();
+		ItemStack mainHand = inventory.getItemInMainHand();
+		ItemStack offHand = inventory.getItemInOffHand();
 		ItemStack helmet = inventory.getHelmet();
 		ItemStack chestplate = inventory.getChestplate();
 		ItemStack leggings = inventory.getLeggings();
 		ItemStack boots = inventory.getBoots();
 		Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(ItemBreakEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(itemstack, Slot.HAND)) {
+			if (tests.apply(mainHand, Slot.MAIN_HAND)) {
 				Consumer<Event> run = events.get(tests);
-				run.accept(new ItemBreakEvent(event.getPlayer(), itemstack, itemstack));
+				run.accept(new ItemBreakEvent(event.getPlayer(), mainHand, itemstack));
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				run.accept(new ItemBreakEvent(event.getPlayer(), offHand, itemstack));
 			} else if (tests.apply(helmet, Slot.HELMET)) {
 				Consumer<Event> run = events.get(tests);
 				run.accept(new ItemBreakEvent(event.getPlayer(), helmet, itemstack));
@@ -245,15 +268,23 @@ public class CustomItemEventHandler implements Listener {
 	public void onPlayerItemConsumeEvent(PlayerItemConsumeEvent event) {
 		ItemStack itemstack = event.getItem();
 		PlayerInventory inventory = event.getPlayer().getInventory();
+		ItemStack mainHand = inventory.getItemInMainHand();
+		ItemStack offHand = inventory.getItemInOffHand();
 		ItemStack helmet = inventory.getHelmet();
 		ItemStack chestplate = inventory.getChestplate();
 		ItemStack leggings = inventory.getLeggings();
 		ItemStack boots = inventory.getBoots();
 		Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(ItemBreakEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(itemstack, Slot.HAND)) {
+			if (tests.apply(mainHand, Slot.MAIN_HAND)) {
 				Consumer<Event> run = events.get(tests);
-				ItemConsumeEvent temp = new ItemConsumeEvent(event.getPlayer(), itemstack, itemstack);
+				ItemConsumeEvent temp = new ItemConsumeEvent(event.getPlayer(), mainHand, itemstack);
+				run.accept(temp);
+				event.setCancelled(temp.isCancelled());
+				event.setItem(temp.getItemStack());
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				ItemConsumeEvent temp = new ItemConsumeEvent(event.getPlayer(), offHand, itemstack);
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 				event.setItem(temp.getItemStack());
@@ -286,11 +317,19 @@ public class CustomItemEventHandler implements Listener {
 	}
 
 	// ITEM HELD EVENT
+	
+	@EventHandler
+	public void onPlayerItemHeldEvent(PlayerChangedMainHandEvent event) {
+		System.out.println("HELLO");
+	}
 
 	@EventHandler
 	public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
+		System.out.println("TEST");
 		int newSlot = event.getNewSlot(), oldSlot = event.getPreviousSlot();
 		PlayerInventory inventory = event.getPlayer().getInventory();
+		ItemStack mainHand = inventory.getItemInMainHand();
+		ItemStack offHand = inventory.getItemInOffHand();
 		ItemStack current = inventory.getItem(newSlot), old = inventory.getItem(oldSlot);
 		ItemStack helmet = inventory.getHelmet();
 		ItemStack chestplate = inventory.getChestplate();
@@ -298,7 +337,12 @@ public class CustomItemEventHandler implements Listener {
 		ItemStack boots = inventory.getBoots();
 		Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(SwitchItemEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(current, Slot.HAND)) {
+			if (tests.apply(mainHand, Slot.MAIN_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				CancellableEvent temp = new SwitchItemEvent(event.getPlayer(), old, current);
+				run.accept(temp);
+				event.setCancelled(temp.isCancelled());
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
 				Consumer<Event> run = events.get(tests);
 				CancellableEvent temp = new SwitchItemEvent(event.getPlayer(), old, current);
 				run.accept(temp);
@@ -331,8 +375,14 @@ public class CustomItemEventHandler implements Listener {
 	// PICKING UP AN ITEM EVENT
 
 	@EventHandler
-	public void onPickupItemEvent(PlayerPickupItemEvent event) {
-		PlayerInventory inventory = event.getPlayer().getInventory();
+	public void onPickupItemEvent(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player)) {
+			return;
+		}
+		Player player = (Player) event.getEntity();
+		PlayerInventory inventory = player.getInventory();
+		ItemStack mainHand = inventory.getItemInMainHand();
+		ItemStack offHand = inventory.getItemInOffHand();
 		ItemStack pickup = event.getItem().getItemStack();
 		ItemStack helmet = inventory.getHelmet();
 		ItemStack chestplate = inventory.getChestplate();
@@ -340,59 +390,74 @@ public class CustomItemEventHandler implements Listener {
 		ItemStack boots = inventory.getBoots();
 		Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(PickUpEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(pickup, Slot.HAND)) {
+			if (tests.apply(pickup, Slot.FLOOR)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
-			} else if (tests.apply(helmet, Slot.HELMET)) {
+			} else if (tests.apply(mainHand, Slot.MAIN_HAND)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpEvent(player, event.getItem());
+				run.accept(temp);
+				event.setCancelled(temp.isCancelled());
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				CancellableEvent temp = new PickUpEvent(player, event.getItem());
+				run.accept(temp);
+				event.setCancelled(temp.isCancelled());
+			}  else if (tests.apply(helmet, Slot.HELMET)) {
+				Consumer<Event> run = events.get(tests);
+				CancellableEvent temp = new PickUpEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(chestplate, Slot.CHESTPLATE)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(leggings, Slot.LEGGINGS)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(boots, Slot.BOOTS)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			}
 		}
-		ItemStack mainHand = inventory.getItemInHand();
+		// TODO: FIX PICKING UP
 		events = _EVENTS.get(PickUpItemEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(mainHand, Slot.HAND)) {
+			if (tests.apply(mainHand, Slot.MAIN_HAND)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpItemEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpItemEvent(player, event.getItem());
+				run.accept(temp);
+				event.setCancelled(temp.isCancelled());
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				CancellableEvent temp = new PickUpItemEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(helmet, Slot.HELMET)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpItemEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpItemEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(chestplate, Slot.CHESTPLATE)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpItemEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpItemEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(leggings, Slot.LEGGINGS)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpItemEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpItemEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			} else if (tests.apply(boots, Slot.BOOTS)) {
 				Consumer<Event> run = events.get(tests);
-				CancellableEvent temp = new PickUpItemEvent(event.getPlayer(), event.getItem());
+				CancellableEvent temp = new PickUpItemEvent(player, event.getItem());
 				run.accept(temp);
 				event.setCancelled(temp.isCancelled());
 			}
@@ -404,16 +469,20 @@ public class CustomItemEventHandler implements Listener {
 	@EventHandler
 	public void onToggleSneakEvent(PlayerToggleSneakEvent event) {
 		PlayerInventory inventory = event.getPlayer().getInventory();
-		ItemStack itemstack = inventory.getItemInHand();
+		ItemStack mainHand = inventory.getItemInMainHand();
+		ItemStack offHand = inventory.getItemInOffHand();
 		ItemStack helmet = inventory.getHelmet();
 		ItemStack chestplate = inventory.getChestplate();
 		ItemStack leggings = inventory.getLeggings();
 		ItemStack boots = inventory.getBoots();
 		Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(ToggleSneakEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(itemstack, Slot.HAND)) {
+			if (tests.apply(mainHand, Slot.MAIN_HAND)) {
 				Consumer<Event> run = events.get(tests);
-				run.accept(new ToggleSneakEvent(event.getPlayer(), itemstack));
+				run.accept(new ToggleSneakEvent(event.getPlayer(), mainHand));
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				run.accept(new ToggleSneakEvent(event.getPlayer(), offHand));
 			} else if (tests.apply(helmet, Slot.HELMET)) {
 				Consumer<Event> run = events.get(tests);
 				run.accept(new ToggleSneakEvent(event.getPlayer(), helmet));
@@ -435,16 +504,20 @@ public class CustomItemEventHandler implements Listener {
 	@EventHandler
 	public void onToggleSprintEvent(PlayerToggleSprintEvent event) {
 		PlayerInventory inventory = event.getPlayer().getInventory();
-		ItemStack itemstack = inventory.getItemInHand();
+		ItemStack mainHand = inventory.getItemInMainHand();
+		ItemStack offHand = inventory.getItemInOffHand();
 		ItemStack helmet = inventory.getHelmet();
 		ItemStack chestplate = inventory.getChestplate();
 		ItemStack leggings = inventory.getLeggings();
 		ItemStack boots = inventory.getBoots();
 		Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(ToggleSprintEvent.class);
 		for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-			if (tests.apply(itemstack, Slot.HAND)) {
+			if (tests.apply(mainHand, Slot.MAIN_HAND)) {
 				Consumer<Event> run = events.get(tests);
-				run.accept(new ToggleSprintEvent(event.getPlayer(), itemstack));
+				run.accept(new ToggleSprintEvent(event.getPlayer(), mainHand));
+			} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+				Consumer<Event> run = events.get(tests);
+				run.accept(new ToggleSprintEvent(event.getPlayer(), offHand));
 			} else if (tests.apply(helmet, Slot.HELMET)) {
 				Consumer<Event> run = events.get(tests);
 				run.accept(new ToggleSprintEvent(event.getPlayer(), helmet));
@@ -467,16 +540,23 @@ public class CustomItemEventHandler implements Listener {
 	public void onEntityDamageEvent(EntityDamageByEntityEvent event) {
 		if (event.getDamager() instanceof Player) {
 			PlayerInventory inventory = ((Player) event.getDamager()).getInventory();
-			ItemStack itemstack = inventory.getItemInHand();
+			ItemStack mainHand = inventory.getItemInMainHand();
+			ItemStack offHand = inventory.getItemInOffHand();
 			ItemStack helmet = inventory.getHelmet();
 			ItemStack chestplate = inventory.getChestplate();
 			ItemStack leggings = inventory.getLeggings();
 			ItemStack boots = inventory.getBoots();
 			Map<BiFunction<ItemStack, Slot, Boolean>, Consumer<Event>> events = _EVENTS.get(DamageEntityEvent.class);
 			for (BiFunction<ItemStack, Slot, Boolean> tests : events.keySet()) {
-				if (tests.apply(itemstack, Slot.HAND)) {
+				if (tests.apply(mainHand, Slot.MAIN_HAND)) {
 					Consumer<Event> run = events.get(tests);
-					CancellableEvent temp = new DamageEntityEvent(((Player) event.getDamager()), itemstack,
+					CancellableEvent temp = new DamageEntityEvent(((Player) event.getDamager()), mainHand,
+							event.getEntity());
+					run.accept(temp);
+					event.setCancelled(temp.isCancelled());
+				} else if (tests.apply(offHand, Slot.OFF_HAND)) {
+					Consumer<Event> run = events.get(tests);
+					CancellableEvent temp = new DamageEntityEvent(((Player) event.getDamager()), offHand,
 							event.getEntity());
 					run.accept(temp);
 					event.setCancelled(temp.isCancelled());

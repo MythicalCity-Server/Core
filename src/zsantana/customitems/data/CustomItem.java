@@ -46,11 +46,19 @@ public abstract class CustomItem {
 	 * Tests if this custom item is indeed the itemstack provided
 	 * 
 	 * @param item An itemstack to check
+	 * @param slot The slot of the armor
 	 * @return If this custom item is the itemstack provided
 	 */
-	public final boolean isApplicable(ItemStack item) {
-		return getItem().isSimilar(item);
+	public final boolean isApplicable(ItemStack item, Slot slot) {
+		return slot.isAllowed(getSlot()) && getItem().isSimilar(item);
 	}
+
+	/**
+	 * Returns the slot that this item should be in use for
+	 * 
+	 * @return A slot representing the use case of this item
+	 */
+	public abstract Slot getSlot();
 
 	/**
 	 * Returns the item to use when checking if an item is applicable
