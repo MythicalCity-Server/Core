@@ -3,8 +3,12 @@ package zsantana.customitems.data;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import zsantana.customitems.events.DamageEntityEvent;
 import zsantana.customitems.events.DropEvent;
@@ -19,29 +23,66 @@ import zsantana.customitems.events.ToggleSneakEvent;
 import zsantana.customitems.events.ToggleSprintEvent;
 import zsantana.misc.ItemFactory;
 
-/**
- * All custom items extend this class and implement methods using the @Listening
- * annotation The first and only parameter in those methods must be classes that
- * extend Event
- * 
- * @author Zackary Santana
- *
- */
 public abstract class RarityItem extends CustomItem {
 
-	private ArrayList<String> _DESCRIPTION;
+	private final Material _MATERIAL;
+	private final String _NAME, _PRE_DESC;
+	private final Rarity _RARITY;
 
+	private ArrayList<String> _description;
 	private ItemStack _item;
 
 	public RarityItem(Material material, String name, String description, Rarity rarity) {
 		super();
-		int i = 0;
-		for (String desc : description.split("\\n")) {
-			this._DESCRIPTION.add(i++, desc);
+		this._MATERIAL = material;
+		this._NAME = name;
+		this._PRE_DESC = description;
+		this._RARITY = rarity;
+
+		createItem();
+	}
+
+	public RarityItem(Material material, String name, String description, Rarity rarity, int startingDurability) {
+		super();
+		this._MATERIAL = material;
+		this._NAME = name;
+		this._PRE_DESC = description;
+		this._RARITY = rarity;
+
+		createItem();
+
+		ItemMeta itemMeta = this._item.getItemMeta();
+		if (itemMeta instanceof Damageable) {
+			((Damageable) itemMeta).setDamage(startingDurability);
+			this._item.setItemMeta(itemMeta);
 		}
-		this._DESCRIPTION.add("  ");
-		this._DESCRIPTION.add(rarity.getColor() + "&o" + rarity.getName() + " Item");
-		this._item = ItemFactory.createItem(material, 1, rarity.getColor() + name, _DESCRIPTION);
+	}
+
+	public RarityItem(Material material, String name, String description, Rarity rarity, int startingDurability,
+			Color leatherArmorColor) {
+		super();
+		this._MATERIAL = material;
+		this._NAME = name;
+		this._PRE_DESC = description;
+		this._RARITY = rarity;
+
+		createItem();
+
+		ItemMeta itemMeta = this._item.getItemMeta();
+		System.out.println(this._item + "" + (this._item != null ? this._item.getType().name() : "NULL!"));
+		if (startingDurability != 0) {
+			if (itemMeta instanceof Damageable) {
+				((Damageable) itemMeta).setDamage(startingDurability);
+				this._item.setItemMeta(itemMeta);
+			}
+		}
+		
+		if (itemMeta instanceof LeatherArmorMeta) {
+			((LeatherArmorMeta) itemMeta).setColor(leatherArmorColor);
+			this._item.setItemMeta(itemMeta);
+		}
+		System.out.println(this._item + "" + (this._item != null ? this._item.getType().name() : "NULL!"));
+		
 	}
 
 	/**
@@ -60,6 +101,19 @@ public abstract class RarityItem extends CustomItem {
 		return this._item;
 	}
 
+	private final void createItem() {
+		int i = 0;
+		if (this._description == null) {
+			this._description = new ArrayList<>();
+		}
+		for (String desc : this._PRE_DESC.split("\\n")) {
+			this._description.add(i++, desc);
+		}
+		this._description.add("  ");
+		this._description.add(this._RARITY.getColor() + "&o" + this._RARITY.getName() + " Armor");
+		this._item = ItemFactory.createItem(this._MATERIAL, 1, this._RARITY.getColor() + this._NAME, this._description);
+	}
+
 	@SuppressWarnings("unchecked")
 	void assignListening() {
 		for (Method method : this.getClass().getDeclaredMethods()) {
@@ -67,19 +121,30 @@ public abstract class RarityItem extends CustomItem {
 				if (method.getParameterCount() == 1) {
 					if (Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
 						Class<? extends Event> type = (Class<? extends Event>) method.getParameterTypes()[0];
-						_EVENT_HANDLER.register(type, this, (event) -> {
-							try {
-								method.invoke(this, method.getParameterTypes()[0].cast(event));
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						});
-
 						Listening annotation = method.getAnnotation(Listening.class);
+						Slot customSlot = annotation.slot();
+						if (customSlot.equals(Slot.NA)) {
+							_EVENT_HANDLER.register(type, this, (event) -> {
+								try {
+									method.invoke(this, method.getParameterTypes()[0].cast(event));
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							});
+						} else {
+							_EVENT_HANDLER.register(type, this, customSlot, (event) -> {
+								try {
+									method.invoke(this, method.getParameterTypes()[0].cast(event));
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							});
+						}
+
 						String desc = annotation.description();
 						if (!desc.equals("")) {
-							if (_DESCRIPTION == null) {
-								_DESCRIPTION = new ArrayList<>();
+							if (_description == null) {
+								_description = new ArrayList<>();
 							}
 
 							String eventType = "&e";
@@ -109,23 +174,23 @@ public abstract class RarityItem extends CustomItem {
 							}
 
 							int itemLoreLength = 40;
-							_DESCRIPTION.add(" ");
+							_description.add(" ");
 							if (desc.length() + eventType.length() > itemLoreLength) {
 								int space = getClosestSpace(desc, itemLoreLength - eventType.length());
-								_DESCRIPTION.add("&e" + eventType + ": &7" + desc.substring(0, space));
+								_description.add("&e" + eventType + ": &7" + desc.substring(0, space));
 								while (space > 0) {
 									desc = desc.substring(space, desc.length());
 									if (desc.length() > itemLoreLength) {
 										space = getClosestSpace(desc, itemLoreLength);
-										_DESCRIPTION.add("&7" + desc.substring(0, space));
+										_description.add("&7" + desc.substring(0, space));
 										System.out.println(space);
 									} else {
-										_DESCRIPTION.add("&7" + desc);
+										_description.add("&7" + desc);
 										space = 0;
 									}
 								}
 							} else {
-								_DESCRIPTION.add("&e" + eventType + ": &7" + desc);
+								_description.add("&e" + eventType + ": &7" + desc);
 							}
 						}
 					}

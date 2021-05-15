@@ -4,11 +4,11 @@ import org.bukkit.Material;
 
 import zsantana.customitems.data.Listening;
 import zsantana.customitems.data.Rarity;
-import zsantana.customitems.data.RarityArmor;
+import zsantana.customitems.data.RarityItem;
 import zsantana.customitems.data.Slot;
 import zsantana.customitems.events.DamageEntityEvent;
 
-public class CustomRarityArmorTest extends RarityArmor {
+public class CustomRarityArmorTest extends RarityItem {
 	
 	public CustomRarityArmorTest() {
 		super(Material.DIAMOND_HELMET, "Protecter", "These were once owned by the gods!\n&7Take with a grain of salt...", Rarity.TOP_SECRET);

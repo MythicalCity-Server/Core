@@ -22,7 +22,6 @@ import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import zsantana.customitems.data.CustomArmor;
 import zsantana.customitems.data.CustomItem;
 import zsantana.customitems.data.Slot;
 import zsantana.customitems.events.DamageEntityEvent;
@@ -54,7 +53,6 @@ public class CustomItemEventHandler implements Listener {
 	 */
 	public CustomItemEventHandler() {
 		CustomItem.setEventHandler(this);
-		CustomArmor.setEventHandler(this);
 
 		this._EVENTS = new HashMap<>();
 		this._EVENTS.put(InteractEvent.class, new HashMap<>());
@@ -92,34 +90,16 @@ public class CustomItemEventHandler implements Listener {
 	 * happening in the same event
 	 * 
 	 * @param eventType  The event you would like to listen for
-	 * @param customArmor The custom item that is listening to the event
-	 * @param run        The action to do when this event happens
-	 */
-	public void register(Class<? extends Event> eventType, CustomArmor customArmor, Consumer<Event> run) {
-		if (!this._EVENTS.containsKey(eventType))
-			this._EVENTS.put(eventType, new HashMap<>());
-		this._EVENTS.get(eventType).put((itemstack, slot) -> {
-			return customArmor.isApplicable(itemstack, slot);
-		}, (event) -> {
-			run.accept(event);
-		});
-	}
-
-	/**
-	 * Registers a new action to run when the event type and custom item are both
-	 * happening in the same event
-	 * 
-	 * @param eventType  The event you would like to listen for
 	 * @param customItem The custom item that is listening to the event
 	 * @param customSlot A custom slot for the item to trigger in
 	 * @param run        The action to do when this event happens
 	 */
-	public void register(Class<? extends Event> eventType, CustomArmor customArmor, Slot customSlot,
+	public void register(Class<? extends Event> eventType, CustomItem customItem, Slot customSlot,
 			Consumer<Event> run) {
 		if (!this._EVENTS.containsKey(eventType))
 			this._EVENTS.put(eventType, new HashMap<>());
 		this._EVENTS.get(eventType).put((itemstack, slot) -> {
-			return customArmor.isApplicable(itemstack, customSlot, slot);
+			return customItem.isApplicable(itemstack, customSlot, slot);
 		}, (event) -> {
 			run.accept(event);
 		});

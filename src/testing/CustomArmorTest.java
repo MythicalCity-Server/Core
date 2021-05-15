@@ -5,14 +5,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import zsantana.customitems.data.CustomArmor;
+import zsantana.customitems.data.CustomItem;
 import zsantana.customitems.data.Listening;
 import zsantana.customitems.data.Slot;
 import zsantana.customitems.events.InteractEvent;
 import zsantana.customitems.events.ToggleSneakEvent;
 import zsantana.misc.ItemFactory;
 
-public class CustomArmorTest extends CustomArmor {
+public class CustomArmorTest extends CustomItem {
 	
 	private ItemStack _item;
 	

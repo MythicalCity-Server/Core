@@ -9,14 +9,6 @@ import zsantana.customitems.CustomItemEventHandler;
 import zsantana.customitems.events.Event;
 import zsantana.misc.ItemFactory;
 
-/**
- * All custom items extend this class and implement methods using the @Listening
- * annotation The first and only parameter in those methods must be classes that
- * extend Event
- * 
- * @author Zackary Santana
- *
- */
 public abstract class CustomItem {
 
 	static CustomItemEventHandler _EVENT_HANDLER;
@@ -55,11 +47,15 @@ public abstract class CustomItem {
 	}
 
 	/**
-	 * Returns the slot that this item should be in use for
+	 * Tests if this custom item is indeed the itemstack provided
 	 * 
-	 * @return A slot representing the use case of this item
+	 * @param item An itemstack to check
+	 * @param slot The slot of the armor
+	 * @return If this custom item is the itemstack provided
 	 */
-	public abstract Slot getSlot();
+	public final boolean isApplicable(ItemStack item, Slot customSlot, Slot slot) {
+		return slot.isAllowed(customSlot) && getItem().isSimilar(item);
+	}
 
 	/**
 	 * Returns the item to use when checking if an item is applicable
@@ -68,20 +64,40 @@ public abstract class CustomItem {
 	 */
 	public abstract ItemStack getItem();
 
+	/**
+	 * Returns the slot that this item should be in use for
+	 * 
+	 * @return A slot representing the use case of this item
+	 */
+	public abstract Slot getSlot();
+
 	@SuppressWarnings("unchecked")
 	void assignListening() {
 		for (Method method : this.getClass().getDeclaredMethods()) {
 			if (method.isAnnotationPresent(Listening.class)) {
 				if (method.getParameterCount() == 1) {
 					if (Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
-						_EVENT_HANDLER.register((Class<? extends Event>) method.getParameterTypes()[0], this,
-								(event) -> {
-									try {
-										method.invoke(this, method.getParameterTypes()[0].cast(event));
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
-								});
+						Listening annotation = method.getAnnotation(Listening.class);
+						Slot customSlot = annotation.slot();
+						if (customSlot.equals(Slot.NA)) {
+							_EVENT_HANDLER.register((Class<? extends Event>) method.getParameterTypes()[0], this,
+									(event) -> {
+										try {
+											method.invoke(this, method.getParameterTypes()[0].cast(event));
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									});
+						} else {
+							_EVENT_HANDLER.register((Class<? extends Event>) method.getParameterTypes()[0], this,
+									customSlot, (event) -> {
+										try {
+											method.invoke(this, method.getParameterTypes()[0].cast(event));
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									});
+						}
 					}
 				}
 			}
