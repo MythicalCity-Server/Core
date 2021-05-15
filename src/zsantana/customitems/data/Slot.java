@@ -9,7 +9,7 @@ package zsantana.customitems.data;
  */
 public enum Slot {
 
-	HELMET, CHESTPLATE, LEGGINGS, BOOTS, HAND, ALL, NA;
+	HELMET, CHESTPLATE, LEGGINGS, BOOTS, MAIN_HAND, OFF_HAND, FLOOR, ALL, NA;
 
 	/**
 	 * Checks if the slot to compare is compatible with this slot

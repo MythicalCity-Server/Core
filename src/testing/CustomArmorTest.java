@@ -20,7 +20,7 @@ public class CustomArmorTest extends CustomArmor {
 		this._item = ItemFactory.createItem(Material.LEATHER_HELMET, 1, "A basic helmet");
 	}
 	
-	@Listening(slot = Slot.HAND)
+	@Listening(slot = Slot.MAIN_HAND, description = "Removes blindness")
 	public void sneaking(ToggleSneakEvent event) {
 		event.getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
 	}

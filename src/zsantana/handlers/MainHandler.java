@@ -5,6 +5,7 @@ import zsantana.configuration.Configuration;
 import zsantana.configuration.ConfigurationHandler;
 import zsantana.customitems.CustomItemsHandler;
 import zsantana.economy.EconomyHandler;
+import zsantana.entitydrops.EntityDropsHandler;
 
 /**
  * Handles all the handlers for the different components of the plugin
@@ -12,12 +13,12 @@ import zsantana.economy.EconomyHandler;
  * @author Zackary Santana
  *
  */
-@SuppressWarnings("unused")
 public class MainHandler extends Handler {
 
 	private EconomyHandler _economy;
 	private CustomItemsHandler _customItems;
 	private ConfigurationHandler _configuration;
+	private EntityDropsHandler _entityDrops;
 
 	/**
 	 * Inits the different handlers
@@ -26,11 +27,11 @@ public class MainHandler extends Handler {
 	public void enable() {
 		Configuration.setCore(_CORE);
 		Command.setCore(_CORE);
-		
+
 		this._economy = new EconomyHandler();
 		this._customItems = new CustomItemsHandler();
 		this._configuration = new ConfigurationHandler();
-
+		this._entityDrops = new EntityDropsHandler();
 	}
 
 	/**
@@ -41,5 +42,6 @@ public class MainHandler extends Handler {
 		this._economy.stop();
 		this._customItems.stop();
 		this._configuration.stop();
+		this._entityDrops.stop();
 	}
 }

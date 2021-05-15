@@ -21,4 +21,18 @@ public @interface Listening {
 	 * @return The slot to be using when it is ran against checks
 	 */
 	Slot slot() default Slot.NA;
+	
+	/**
+	 * Used to automate the descriptions of item abilities
+	 * 
+	 * @return The description of what this item ability does
+	 */
+	String description() default "";
+	
+	/**
+	 * Used to automate the item ability of an item
+	 * 
+	 * @return The item ability words
+	 */
+	String itemAbility() default "";
 }

@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import zsantana.customitems.data.CustomItem;
 import zsantana.customitems.data.Listening;
+import zsantana.customitems.data.Slot;
 import zsantana.customitems.events.InteractEvent;
 import zsantana.misc.ItemFactory;
 
@@ -22,11 +23,16 @@ public class CustomItemTest extends CustomItem {
 	public void test(InteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_AIR) {
 			Location location = event.getPlayer().getLocation().add(event.getPlayer().getLocation().getDirection().multiply(5));
-			while (location.getBlock().getType() != Material.AIR && location.getBlock().getType() != Material.WATER && location.getBlock().getType() != Material.STATIONARY_WATER) {
+			while (location.getBlock().getType() != Material.AIR && location.getBlock().getType() != Material.WATER) {
 				location = location.add(0, 1, 0);
 			}
 			event.getPlayer().teleport(location);
 		}
+	}
+
+	@Override
+	public Slot getSlot() {
+		return Slot.OFF_HAND;
 	}
 
 	@Override

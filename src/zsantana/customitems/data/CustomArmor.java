@@ -7,10 +7,11 @@ import org.bukkit.inventory.ItemStack;
 
 import zsantana.customitems.CustomItemEventHandler;
 import zsantana.customitems.events.Event;
+import zsantana.misc.ItemFactory;
 
 public abstract class CustomArmor {
 
-	private static CustomItemEventHandler _EVENT_HANDLER;
+	static CustomItemEventHandler _EVENT_HANDLER;
 
 	/**
 	 * @param eventHandler The Event Handler to register events on to during load
@@ -42,7 +43,7 @@ public abstract class CustomArmor {
 	 * @return If this custom item is the itemstack provided
 	 */
 	public final boolean isApplicable(ItemStack item, Slot slot) {
-		return slot.isAllowed(getSlot()) && getItem().isSimilar(item);
+		return slot.isAllowed(getSlot()) && ItemFactory.isApplicable(getItem(), item);
 	}
 
 	/**
@@ -71,7 +72,7 @@ public abstract class CustomArmor {
 	public abstract Slot getSlot();
 
 	@SuppressWarnings("unchecked")
-	private final void assignListening() {
+	void assignListening() {
 		for (Method method : this.getClass().getDeclaredMethods()) {
 			if (method.isAnnotationPresent(Listening.class)) {
 				if (method.getParameterCount() == 1) {
