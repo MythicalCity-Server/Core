@@ -7,8 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import zsantana.entitydrops.EntityDropsHandler;
 
 public class TestEntityDrop {
-	
-	public TestEntityDrop() {
-		EntityDropsHandler.addDrop(EntityType.ZOMBIE, new ItemStack(Material.DIAMOND_AXE), 100);
-	}
+
+    public TestEntityDrop() {
+        EntityDropsHandler.addDrop(EntityType.ZOMBIE, new ItemStack(Material.DIAMOND_AXE), 100);
+    }
 }

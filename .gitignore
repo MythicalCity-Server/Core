@@ -1,0 +1,6 @@
+*.jar
+deps/
+.vscode
+bin/
+target/
+copy.sh
