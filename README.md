@@ -20,7 +20,7 @@ The following features are built in to this repo:
 - [Commands](src/zsantana/command): Handles constructing a command based off of annotations and compiling it to a full command.
   - Parses all the annotations in the command and compiles what should run on the command
   - [Command Test](/src/testing/CustomRarityArmorTest.java.java)
-- [Congiguration](src/zsantana/configuration): Handles a configuration saver/reader on plugin load/unload.
+- [Configuration](src/zsantana/configuration): Handles a configuration saver/reader on plugin load/unload.
 - [Entity Drops](src/zsantana/entitydrops): Adds a custom entity drop or a custom entity that has custom gear
 
 
