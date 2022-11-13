@@ -1,8 +1,5 @@
 package testing;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import godset.Godset;
 
 public class Testing {

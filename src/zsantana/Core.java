@@ -37,4 +37,8 @@ public class Core extends JavaPlugin {
     public void onDisable() {
         this._handler.stop();
     }
+
+    public MainHandler getMainHandler() {
+        return this._handler;
+    }
 }

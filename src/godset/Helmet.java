@@ -2,7 +2,6 @@ package godset;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 
 import zsantana.customitems.data.Listening;
 import zsantana.customitems.data.Rarity;

@@ -11,42 +11,46 @@ import zsantana.Core;
  */
 public abstract class Handler {
 
-	protected static Core _CORE;
+    protected static Core _CORE;
 
-	/**
-	 * @param core Hooks in to the core to allow for any hooks to be accessed
-	 */
-	public static void setCore(Core core) {
-		_CORE = core;
-	}
+    /**
+     * @param core Hooks in to the core to allow for any hooks to be accessed
+     */
+    public static void setCore(Core core) {
+        _CORE = core;
+    }
 
-	public Handler() {
-		enable();
-	}
+    public static Core getCore() {
+        return _CORE;
+    }
 
-	/**
-	 * Restarts the handler
-	 */
-	public final void restart() {
-		stop();
-		enable();
-	}
+    public Handler() {
+        enable();
+    }
 
-	/**
-	 * Stops the handler
-	 */
-	public final void stop() {
-		disable();
-	}
+    /**
+     * Restarts the handler
+     */
+    public final void restart() {
+        stop();
+        enable();
+    }
 
-	/**
-	 * Enables the handler
-	 */
-	protected abstract void enable();
+    /**
+     * Stops the handler
+     */
+    public final void stop() {
+        disable();
+    }
 
-	/**
-	 * Disables the handler
-	 */
-	protected abstract void disable();
+    /**
+     * Enables the handler
+     */
+    protected abstract void enable();
+
+    /**
+     * Disables the handler
+     */
+    protected abstract void disable();
 
 }
